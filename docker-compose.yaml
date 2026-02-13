@@ -12,5 +12,29 @@ services:
       - postgres_data:/var/lib/postgresql/data
     restart: unless-stopped
 
+  backend:
+    build:
+      context: ./src/backend
+      dockerfile: Dockerfile
+    container_name: clinic_backend
+    environment:
+      - ConnectionStrings__DefaultConnection=Host=postgres;Database=ClinicDb;Username=clinic_user;Password=clinic_password
+    ports:
+      - "5080:8080"
+    depends_on:
+      - postgres
+    restart: unless-stopped
+
+  frontend:
+    build:
+      context: ./src/frontend
+      dockerfile: Dockerfile
+    container_name: clinic_frontend
+    ports:
+      - "3000:3000"
+    depends_on:
+      - backend
+    restart: unless-stopped
+
 volumes:
   postgres_data:
